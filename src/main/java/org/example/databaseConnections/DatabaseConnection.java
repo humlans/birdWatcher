@@ -3,8 +3,8 @@ package org.example.databaseConnections;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.example.items.BirdSpecies;
+import org.example.items.JSonFormatter;
 import org.example.items.Sighting;
-import org.example.items.User;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -17,172 +17,6 @@ import java.util.ArrayList;
 // Should I split the different objects into different database connections
 // I may be able to create an interface because they are quite closely related, the only difference should be the return type...
 public class DatabaseConnection {
-
-    private ArrayList<Sighting> sightings;
-
-    public ArrayList<Sighting> getAllSightings() {
-        try {
-            URL url = new URL("http://localhost:8080/sighting/get-all");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-
-            int code = connection.getResponseCode();
-
-            if (code >= 200 && code <= 299) {
-                InputStream stream = connection.getInputStream();
-                InputStreamReader streamReader = new InputStreamReader(stream);
-                BufferedReader reader = new BufferedReader(streamReader);
-
-                StringBuilder message = new StringBuilder();
-                String readMessage = reader.readLine();
-                while (readMessage != null) {
-                    message.append(readMessage);
-                    readMessage = reader.readLine();
-                }
-
-                Gson gson = new Gson();
-                sightings = new ArrayList<>();
-                Type listType = new TypeToken<ArrayList<Sighting>>() {}.getType();
-                sightings = gson.fromJson(String.valueOf(message), listType);
-
-                return sightings;
-
-            }
-            else {
-                System.out.println("Error. Status code " + code + ".");
-            }
-        }
-        catch (IOException e) {
-            System.out.println("Error. " + e);
-        }
-        return new ArrayList<>();
-    }
-
-    // Make this one and the one above into the same function with just two different variables?
-    public ArrayList<Sighting> getSightingsByUser(String username) {
-        try {
-            String urlString = "http://localhost:8080/sighting/get-by-user?username=";
-            urlString += username;
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-
-            int code = connection.getResponseCode();
-
-            if (code >= 200 && code <= 299) {
-                InputStream stream = connection.getInputStream();
-                InputStreamReader streamReader = new InputStreamReader(stream);
-                BufferedReader reader = new BufferedReader(streamReader);
-
-                StringBuilder message = new StringBuilder();
-                String readMessage = reader.readLine();
-                while (readMessage != null) {
-                    message.append(readMessage);
-                    readMessage = reader.readLine();
-                }
-
-                Gson gson = new Gson();
-                ArrayList<Sighting> sightings = new ArrayList<>();
-                Type listType = new TypeToken<ArrayList<Sighting>>() {}.getType();
-                sightings = gson.fromJson(String.valueOf(message), listType);
-
-                return sightings;
-
-            }
-            else {
-                System.out.println("Error. Status code " + code + ".");
-            }
-        }
-        catch (IOException e) {
-            System.out.println("Error. " + e);
-        }
-        return new ArrayList<>();
-    }
-
-    public Sighting getSightingById(int id) {
-        try {
-            String urlString = "http://localhost:8080/sighting/get-by-id";
-            urlString += "?id=" + id;
-
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-
-            int code = connection.getResponseCode();
-
-            if (code >= 200 && code <= 299) {
-                InputStream stream = connection.getInputStream();
-                InputStreamReader streamReader = new InputStreamReader(stream);
-                BufferedReader reader = new BufferedReader(streamReader);
-
-                StringBuilder message = new StringBuilder();
-                String readMessage = reader.readLine();
-                while (readMessage != null) {
-                    message.append(readMessage);
-                    readMessage = reader.readLine();
-                }
-
-                Gson gson = new Gson();
-                Sighting sighting = new Sighting();
-                Type objectType = new TypeToken<Sighting>() {}.getType();
-                sighting = gson.fromJson(String.valueOf(message), objectType);
-
-                return sighting;
-
-            }
-            else {
-                System.out.println("Error. Status code " + code + ".");
-            }
-        }
-        catch (IOException e) {
-            System.out.println("Error. " + e);
-        }
-        return null;
-    }
-
-
-    public boolean addNewBirdSpecies(BirdSpecies birdSpecies) {
-        try {
-            String scientificName = URLEncoder.encode(birdSpecies.getScientificName(), StandardCharsets.UTF_8);
-            String englishName = URLEncoder.encode(birdSpecies.getEnglishName(), StandardCharsets.UTF_8);
-            String family = URLEncoder.encode(birdSpecies.getFamily(), StandardCharsets.UTF_8);
-            String habitat = URLEncoder.encode(birdSpecies.getHabitat(), StandardCharsets.UTF_8);
-            String diet = URLEncoder.encode(birdSpecies.getDiet(), StandardCharsets.UTF_8);
-            String gradeOfEndangerment = URLEncoder.encode(birdSpecies.getGradeOfEndangerment(), StandardCharsets.UTF_8);
-            String appearance = URLEncoder.encode(birdSpecies.getAppearance(), StandardCharsets.UTF_8);
-
-            String urlString = "http://localhost:8080/bird-species/add-new";
-            urlString += "?scientificName=" + scientificName;
-            urlString += "&englishName=" + englishName;
-            urlString += "&family=" + family;
-            urlString += "&habitat=" + habitat;
-            urlString += "&diet=" + diet;
-            urlString += "&gradeOfEndangerment=" + gradeOfEndangerment;
-            urlString += "&appearance=" + appearance;
-            urlString += "&expectedLifetime=" + birdSpecies.getExpectedLifetime();
-
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.connect();
-
-            int code = connection.getResponseCode();
-
-            if (code >= 200 && code <= 299) {
-                return true;
-            }
-            else {
-                System.out.println("Error. Status code " + code + ".");
-            }
-        }
-        catch (IOException e) {
-            System.out.println("Error. " + e);
-        }
-        return false;
-    }
     public ArrayList<BirdSpecies> getAllBirdSpecies() {
         try {
             URL url = new URL("http://localhost:8080/bird-species/get-all");
@@ -222,82 +56,6 @@ public class DatabaseConnection {
         return new ArrayList<>();
     }
 
-    public User login(String username, String password) {
-        try {
-            String urlString = "http://localhost:8080/user/login";
-            urlString += "?username=" + username;
-            urlString += "&password=" + password;
-
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-
-            int code = connection.getResponseCode();
-
-            if (code >= 200 && code <= 299) {
-                InputStream stream = connection.getInputStream();
-                InputStreamReader streamReader = new InputStreamReader(stream);
-                BufferedReader reader = new BufferedReader(streamReader);
-
-                StringBuilder message = new StringBuilder();
-                String readMessage = reader.readLine();
-                while (readMessage != null) {
-                    message.append(readMessage);
-                    readMessage = reader.readLine();
-                }
-
-                Gson gson = new Gson();
-                User user = new User();
-                Type objectType = new TypeToken<User>() {}.getType();
-                user = gson.fromJson(String.valueOf(message), objectType);
-
-                return user;
-            }
-            else {
-                System.out.println("Error. Status code " + code + ".");
-            }
-        }
-        catch (IOException e) {
-            System.out.println("Error. " + e);
-        }
-        return null;
-    }
-
-    public boolean addNewSighting(Sighting newSighting) {
-        try {
-            String title = URLEncoder.encode(newSighting.getTitle(), StandardCharsets.UTF_8);
-            String comment = URLEncoder.encode(newSighting.getComment(), StandardCharsets.UTF_8);
-
-            String urlString = "http://localhost:8080/sighting/add-new";
-            urlString += "?id=" + newSighting.getId();
-            urlString += "&title=" + title;
-            urlString += "&dateTime=" + newSighting.getDateTime();
-            urlString += "&user=" + newSighting.getUser().getUsername();
-            urlString += "&birdSpecies=" + newSighting.getBirdSpecies().getId();
-            urlString += "&comment=" + comment;
-
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.connect();
-
-            int code = connection.getResponseCode();
-
-            if (code >= 200 && code <= 299) {
-                return true;
-            }
-            else {
-                System.out.println("Error. Status code " + code + ".");
-            }
-        }
-        catch (IOException e) {
-            System.out.println("Error. " + e);
-        }
-        return false;
-
-    }
-
     public BirdSpecies getBirdSpeciesByEnglishName(String englishName) {
         try {
             String encodedEnglishName = URLEncoder.encode(englishName, StandardCharsets.UTF_8);
@@ -332,51 +90,13 @@ public class DatabaseConnection {
 
             }
             else {
-                System.out.println("Error. Status code " + code + ".");
+                System.out.println("Error. Could not find bird species");
             }
         }
         catch (IOException e) {
             System.out.println("Error. " + e);
         }
         return null;
-    }
-
-
-    public boolean editSighting(Sighting sighting) {
-        try {
-            String title = URLEncoder.encode(sighting.getTitle(), StandardCharsets.UTF_8);
-            String comment = URLEncoder.encode(sighting.getComment(), StandardCharsets.UTF_8);
-
-            // SO THE DATABASE COMPLAINS BECAUSE IT THINKS THAT IM TRYING TO CHANGE THE PRIMARY KEY TO AN ALREADY EXISTING ONE,
-            // WHICH IS A BIT CRAZY BECAUSE THAT IS NOT THE ID I SEND INTO IT... WHERE DOES IT GET THAT ID?
-
-            String urlString = "http://localhost:8080/sighting/edit";
-            urlString += "?id=" + sighting.getId();
-            urlString += "&title=" + title;
-            urlString += "&dateTime=" + sighting.getDateTime();
-            urlString += "&user=" + sighting.getUser().getUsername();
-            urlString += "&birdSpecies=" + sighting.getBirdSpecies().getId();
-            urlString += "&comment=" + comment;
-
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("PUT");
-            connection.connect();
-
-            int code = connection.getResponseCode();
-
-            if (code >= 200 && code <= 299) {
-                return true;
-            }
-            else {
-                System.out.println("Error. Status code " + code + ".");
-            }
-        }
-        catch (IOException e) {
-            System.out.println("Error. " + e);
-        }
-        return false;
-
     }
 
     public int getLastId(String urlString) {
@@ -417,59 +137,6 @@ public class DatabaseConnection {
         return Integer.MIN_VALUE;
     }
 
-    public void addNewSightingJson(Sighting sighting, String putOrPost, String urlString) {
-        try{
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod(putOrPost);
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Accept", "application/json");
-            connection.setDoOutput(true);
-            String jsonInputString = "{" +
-                                        "\"id\": " + sighting.getId() + "," +
-                                        "\"title\": \"" + sighting.getTitle() +"\"," +
-                                        "\"dateTime\": " + "\"" + sighting.getDateTime() + "\"," +
-                                        "\"user\": {" +
-                                                    "\"username\": \"" + sighting.getUser().getUsername() + "\"," +
-                                                    "\"email\": \"" + sighting.getUser().getEmail() +"\"," +
-                                                    "\"password\": " + "\"" + sighting.getUser().getPassword() + "\"," +
-                                                    "\"admin\": " + "\"" + sighting.getUser().isAdmin() + "\"" +
-                                        "}," +
-                                        "\"birdSpecies\": {" +
-                                                            "\"id\": " + sighting.getBirdSpecies().getId() + "," +
-                                                            "\"scientificName\": \"" + sighting.getBirdSpecies().getScientificName() +"\"," +
-                                                            "\"englishName\": " + "\"" + sighting.getBirdSpecies().getEnglishName() + "\"," +
-                                                            "\"family\": " + "\"" + sighting.getBirdSpecies().getFamily() + "\"," +
-                                                            "\"habitat\": " + "\"" + sighting.getBirdSpecies().getHabitat() + "\"," +
-                                                            "\"diet\": " + "\"" + sighting.getBirdSpecies().getDiet() + "\"," +
-                                                            "\"gradeOfEndangerment\": " + "\"" + sighting.getBirdSpecies().getGradeOfEndangerment() + "\"," +
-                                                            "\"appearance\": " + "\"" + sighting.getBirdSpecies().getAppearance() + "\"," +
-                                                            "\"expectedLifetime\": " + sighting.getBirdSpecies().getExpectedLifetime() +
-                                        "}," +
-                                        "\"comment\": \"" + sighting.getComment() +"\"" +
-                                    "}";
-            System.out.println(jsonInputString);
-            try(OutputStream os = connection.getOutputStream()) {
-                byte[] input = jsonInputString.getBytes("utf-8");
-                os.write(input, 0, input.length);
-            }
-            try(BufferedReader br = new BufferedReader(
-                    new InputStreamReader(connection.getInputStream(), "utf-8"))) {
-                StringBuilder response = new StringBuilder();
-                String responseLine = null;
-                while ((responseLine = br.readLine()) != null) {
-                    response.append(responseLine.trim());
-                }
-            }
-            connection.connect(); //This will make the connection
-
-        }
-        catch (Exception e){
-            System.out.println("Something went wrong, everything crashed.");
-            System.out.println(e.getMessage());
-        }
-    }
-
     public void addNewBirdSpeciesJson(BirdSpecies birdSpecies, String putOrPost, String urlString) {
         try{
             URL url = new URL(urlString);
@@ -478,16 +145,10 @@ public class DatabaseConnection {
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("Accept", "application/json");
             connection.setDoOutput(true);
-            String jsonInputString =  "{\"id\": " + birdSpecies.getId() + "," +
-                    "\"scientificName\": \"" + birdSpecies.getScientificName() +"\"," +
-                    "\"englishName\": " + "\"" + birdSpecies.getEnglishName() + "\"," +
-                    "\"family\": " + "\"" + birdSpecies.getFamily() + "\"," +
-                    "\"habitat\": " + "\"" + birdSpecies.getHabitat() + "\"," +
-                    "\"diet\": " + "\"" + birdSpecies.getDiet() + "\"," +
-                    "\"gradeOfEndangerment\": " + "\"" + birdSpecies.getGradeOfEndangerment() + "\"," +
-                    "\"appearance\": " + "\"" + birdSpecies.getAppearance() + "\"," +
-                    "\"expectedLifetime\": " + birdSpecies.getExpectedLifetime() +
-                    "}";
+
+            //Turns the birdSpecies into json format
+            JSonFormatter jSonFormatter = new JSonFormatter();
+            String jsonInputString = jSonFormatter.getBirdspeciesAsJson(birdSpecies);
 
             try(OutputStream os = connection.getOutputStream()) {
                 byte[] input = jsonInputString.getBytes("utf-8");
@@ -501,12 +162,13 @@ public class DatabaseConnection {
                     response.append(responseLine.trim());
                 }
             }
-            connection.connect(); //This will make the connection
+            connection.connect();
 
         }
         catch (Exception e){
-            System.out.println("Something went wrong, everything crashed.");
+            System.out.println("Something went wrong.");
             System.out.println(e.getMessage());
+            System.out.println("The scientific name has to be unique.");
         }
     }
 

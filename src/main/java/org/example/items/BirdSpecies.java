@@ -1,6 +1,7 @@
 package org.example.items;
 
-import org.example.observerPattern.NotificationService;
+import org.example.databaseConnections.NotificationSenderConnection;
+import org.example.observerPattern.NotificationSender;
 
 public class BirdSpecies {
     private int id;
@@ -13,7 +14,7 @@ public class BirdSpecies {
     private String appearance;
     private int expectedLifetime;
 
-    //private NotificationService notificationService;
+    private NotificationSender notificationSender;
 
     public BirdSpecies(int id, String scientificName, String englishName, String family, String habitat, String diet, String gradeOfEndangerment, String appearance, int expectedLifetime) {
         this.id = id;
@@ -38,6 +39,14 @@ public class BirdSpecies {
         System.out.println("Grade of endangerment: " + gradeOfEndangerment);
         System.out.println("Appearance: " + appearance);
         System.out.println("Expected lifetime: " + expectedLifetime);
+    }
+
+    public NotificationSender getNotificationSender() {
+        return notificationSender;
+    }
+
+    public void setNotificationSender(NotificationSender notificationSender) {
+        this.notificationSender = notificationSender;
     }
 
     public int getId() {

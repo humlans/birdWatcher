@@ -3,7 +3,7 @@ package org.example.items;
 public class Sighting {
     private int id;
     private String title;
-    private String dateTime;
+    private String date;
     private User user;
     private BirdSpecies birdSpecies;
     private String comment;
@@ -11,7 +11,7 @@ public class Sighting {
     public Sighting(int id, String title, String dateTime, User user, BirdSpecies birdSpecies, String comment) {
         this.id = id;
         this.title = title;
-        this.dateTime = dateTime;
+        this.date = dateTime;
         this.user = user;
         this.birdSpecies = birdSpecies;
         this.comment = comment;
@@ -19,7 +19,7 @@ public class Sighting {
 
     public Sighting(String title, String dateTime, User user, BirdSpecies birdSpecies, String comment) {
         this.title = title;
-        this.dateTime = dateTime;
+        this.date = dateTime;
         this.user = user;
         this.birdSpecies = birdSpecies;
         this.comment = comment;
@@ -31,7 +31,7 @@ public class Sighting {
 
     public void printDetailedSighting() {
         System.out.println(title);
-        System.out.println("Date and time of sighting: " + dateTime);
+        System.out.println("Date and time of sighting: " + date);
         System.out.println("Bird species: " + getBirdSpecies().getEnglishName());
         System.out.println("Comment from finder: " + comment);
         System.out.println("Username of finder: " + user.getUsername());
@@ -54,12 +54,12 @@ public class Sighting {
         this.title = title;
     }
 
-    public String getDateTime() {
-        return dateTime;
+    public String getDate() {
+        return date;
     }
 
-    public void setDateTime(String dateTime) {
-        this.dateTime = dateTime;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public User getUser() {

@@ -3,6 +3,7 @@ package org.example.builderPattern;
 import org.example.ProgramFacade;
 import org.example.commandPattern.ICommand;
 import org.example.databaseConnections.DatabaseConnection;
+import org.example.databaseConnections.SightingConnection;
 import org.example.items.BirdSpecies;
 import org.example.items.Menu;
 import org.example.items.Sighting;
@@ -12,10 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MenuBuilder {
-
-    private ArrayList<Sighting> allSightings = new ArrayList<>();
-
-    private ArrayList<BirdSpecies> allBirdSpecies = new ArrayList<>();
     private User currentUser;
     private HashMap<String, ICommand> commands = new HashMap<>();
     private ArrayList<String> options = new ArrayList<>();
@@ -26,18 +23,7 @@ public class MenuBuilder {
         currentUser = null;
     }
 
-    public MenuBuilder setAllSightings() {
-        DatabaseConnection databaseConnection = new DatabaseConnection();
-        allSightings = databaseConnection.getAllSightings();
-        return this;
-    }
 
-
-    public MenuBuilder setAllBirdSpecies() {
-        DatabaseConnection databaseConnection = new DatabaseConnection();
-        allBirdSpecies = databaseConnection.getAllBirdSpecies();
-        return this;
-    }
     public MenuBuilder setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
         return this;
@@ -54,7 +40,7 @@ public class MenuBuilder {
 
 
     public Menu build() {
-        return new Menu(allSightings, currentUser, allBirdSpecies, commands, options);
+        return new Menu(currentUser, commands, options);
     }
 
     public MenuBuilder setLoggedInMenu(User currentUser) {
@@ -64,6 +50,11 @@ public class MenuBuilder {
 
     public MenuBuilder setNotLoggedInMenu() {
         menuDirector.notLoggedInMenu(this, program);
+        return this;
+    }
+
+    public MenuBuilder createSubscriptionMenu() {
+        menuDirector.subscriptionMenu(this, program);
         return this;
     }
 

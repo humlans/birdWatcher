@@ -2,12 +2,14 @@ package org.example.commandPattern;
 
 import org.example.ProgramFacade;
 import org.example.databaseConnections.DatabaseConnection;
+import org.example.databaseConnections.SightingConnection;
 import org.example.items.BirdSpecies;
 import org.example.items.Menu;
 import org.example.items.Sighting;
 import org.example.items.UserInput;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class DeleteCommand implements ICommand{
     private ProgramFacade program;
@@ -15,6 +17,7 @@ public class DeleteCommand implements ICommand{
     private ArrayList<Sighting> sightings;
     UserInput userInput;
     private DatabaseConnection databaseConnection = new DatabaseConnection();
+    private SightingConnection sightingConnection = new SightingConnection();
 
     public DeleteCommand(ProgramFacade program) {
         this.program = program;
@@ -22,16 +25,21 @@ public class DeleteCommand implements ICommand{
     }
     @Override
     public void execute() {
-        this.birdSpecies = program.getMenu().getBirdSpecies();
+        this.birdSpecies = databaseConnection.getAllBirdSpecies();
         String username = program.getMenu().getCurrentUser().getUsername();
-        this.sightings = databaseConnection.getSightingsByUser(username);
+        this.sightings = sightingConnection.getSightingsByUser(username);
         userInput = new UserInput();
 
+        //Lets the user choose whether to erase a sighting or a bird.
         System.out.println("Do you want to delete a sighting or a bird species?");
         System.out.println("Write \"s\" for sighting and \"b\" for bird species");
         String input = userInput.getCanBeBlankStringInput();
         String chosenMapping = "";
         int maxId;
+        //Lets the user choose an appropriate id or go back to the menu.
+
+        //!!!!!!!!!!!!!!!!!!!
+        //Is there a better way to do this, can I extract the method somehow??
         if(input.equals("b")) {
             chosenMapping = "bird-species";
             maxId = birdSpecies.size();
@@ -54,6 +62,7 @@ public class DeleteCommand implements ICommand{
         }
     }
 
+    //Erases the chosen bird species
     private void deleteBirdSpecies(int chosenId, String mapping) {
         BirdSpecies chosenBirdSpecies = birdSpecies.get(chosenId);
         chosenBirdSpecies.printDetailedBirdSpecies();
@@ -64,6 +73,7 @@ public class DeleteCommand implements ICommand{
         }
     }
 
+    //Erases the chosen sighting
     private void deleteSighting(int chosenId, String mapping) {
         Sighting sighting = sightings.get(chosenId);
         sighting.printDetailedSighting();

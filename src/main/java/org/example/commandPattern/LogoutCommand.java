@@ -13,11 +13,15 @@ public class LogoutCommand implements ICommand{
 
     @Override
     public void execute() {
+        //Creates a new not logged in menu.
         MenuBuilder menuBuilder = new MenuBuilder(program);
         menuBuilder.emptyOptionsAndCommands();
         Menu newLoggedInMenu = menuBuilder.setNotLoggedInMenu().build();
-        newLoggedInMenu.setCurrentUser(null);
-        program.setMenu(newLoggedInMenu);
 
+        //Empties the current user.
+        newLoggedInMenu.setCurrentUser(null);
+
+        //Switches the program to the new menu
+        program.setMenu(newLoggedInMenu);
     }
 }

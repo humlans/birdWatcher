@@ -1,7 +1,9 @@
 package org.example;
 
 import org.example.builderPattern.MenuBuilder;
+import org.example.databaseConnections.NotificationConnection;
 import org.example.items.Menu;
+import org.example.items.Notification;
 
 public class ProgramFacade {
     private Menu menu;
@@ -11,7 +13,6 @@ public class ProgramFacade {
         running = true;
         MenuBuilder menuBuilder = new MenuBuilder(this);
         menu = menuBuilder.setNotLoggedInMenu().build();
-        menu.printMenuOptionsAndExecute();
     }
 
     public void run() {
@@ -19,6 +20,7 @@ public class ProgramFacade {
             menu.printMenuOptionsAndExecute();
         }
     }
+
 
     public void setRunning(boolean running) {
         this.running = running;

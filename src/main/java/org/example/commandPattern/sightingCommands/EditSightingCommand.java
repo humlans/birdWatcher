@@ -1,12 +1,14 @@
-package org.example.commandPattern;
+package org.example.commandPattern.sightingCommands;
 
 import org.example.ProgramFacade;
+import org.example.commandPattern.ICommand;
 import org.example.databaseConnections.DatabaseConnection;
+import org.example.databaseConnections.SightingConnection;
 import org.example.items.*;
 
 import java.util.ArrayList;
 
-public class EditSightingCommand implements ICommand{
+public class EditSightingCommand implements ICommand {
     private ProgramFacade program;
     private UserInput userInput = new UserInput();
 
@@ -16,11 +18,12 @@ public class EditSightingCommand implements ICommand{
 
     @Override
     public void execute() {
-        DatabaseConnection databaseConnection = new DatabaseConnection();
+        SightingConnection sightingConnection = new SightingConnection();
         User currentUser = program.getMenu().getCurrentUser();
-        ArrayList<Sighting> sightingByCurrentUser = databaseConnection.getSightingsByUser(currentUser.getUsername());
+        ArrayList<Sighting> sightingByCurrentUser = sightingConnection.getSightingsByUser(currentUser.getUsername());
         UserInput userInput = new UserInput();
 
+        //Displays all the existing sightings by the current user and let them choose which one to edit.
         System.out.println("You have chosen to edit a sighting");
         System.out.println("To edit a sighting write one of the following id:s below.\n");
         for(int i = 0; i < sightingByCurrentUser.size(); i++) {
@@ -31,6 +34,7 @@ public class EditSightingCommand implements ICommand{
         if(choice == Integer.MIN_VALUE) {
             return;
         }
+        //If a valid choice is found proceeds to ask for the information that they want to edit.
         if(choice < sightingByCurrentUser.size() && choice > -1) {
             Sighting chosenSighting = sightingByCurrentUser.get(choice);
             System.out.println("You have chosen to edit " + chosenSighting.getTitle());
@@ -58,12 +62,12 @@ public class EditSightingCommand implements ICommand{
                 String comment = userInput.getCanBeBlankStringInput();
                 chosenSighting.setComment(comment);
             }
-            databaseConnection.addNewSightingJson(chosenSighting, "PUT", "http://localhost:8080/sighting/edit");
+
+            //Saves the changes in the database.
+            sightingConnection.addOrEditSightingJson(chosenSighting, "PUT", "http://localhost:8080/sighting/edit");
         }
     }
 
-    //Is there any way for me to share this one between the two commands or will I just have to accept that
-    // I have duplicate code here and in CreateSightingCommand
     public BirdSpecies findExistingBirdSpecies() {
         String birdSpeciesName = "";
         DatabaseConnection databaseConnection = new DatabaseConnection();
